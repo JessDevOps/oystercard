@@ -28,5 +28,27 @@ describe Oystercard do
     expect { subject.deduct(3) }.to change { subject.balance }.by -3
   end
     
+  it 'touches in for journey' do
+    expect(subject).to respond_to(:touch_in)
+  end
+
+  it 'touches out for journey' do
+    expect(subject).to respond_to(:touch_out)
+  end
+
+  it 'can tell if user is already in journey' do
+    expect(subject).not_to be_in_journey
+  end
+
+  it 'can touch in' do
+    subject.touch_in
+    expect(subject).to be_in_journey 
+  end
+
+  # it 'takes a user out of a journey' do
+  #   subject.touch_in
+  #   subject.touch_out
+  #   expect(subject).not_to be_in_journey
+  # end
 
 end

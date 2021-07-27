@@ -6,6 +6,7 @@ attr_reader :balance
 
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
+    @journey = journey
   end
 
   # def balance
@@ -20,4 +21,17 @@ attr_reader :balance
   def deduct(fare)
     @balance = @balance - fare
   end
+
+  def touch_in
+    @journey = true
+  end
+
+  def touch_out
+    @journey = false
+  end
+
+  def in_journey?
+    return journey ? true : false
+  end
+
 end
