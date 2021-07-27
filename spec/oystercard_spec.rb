@@ -2,6 +2,8 @@ require 'oystercard.rb'
 
 describe Oystercard do
 
+  let(:station){ double:station }
+
   it 'has a default balance' do
     expect(subject.balance).to eq 0 
   end
@@ -36,6 +38,7 @@ describe Oystercard do
   end
 
   context 'to check card has enough balance' do
+
     before(:each) do
       subject.top_up(Oystercard::MAXIMUM_BALANCE)
     end
@@ -45,26 +48,38 @@ describe Oystercard do
     end
 
     it 'can touch in' do
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject).to be_in_journey 
     end
 
     it 'takes a user out of a journey' do
-      subject.touch_in
+      subject.touch_in(station)
       subject.touch_out
       expect(subject).not_to be_in_journey
     end
     
     it 'deducts money from the card when user touches out' do
-      subject.touch_in
+      subject.touch_in(station)
       subject.touch_out
       expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
+    end
+
+    it 'stores the station as entry station' do
+      subject.touch_in(station)
+      expect(subject.entry_station).to eq station
     end
 
   end
 
   it 'shows error message on touch in if card balance < 1' do
-    expect { subject.touch_in }.to raise_error 'insufficient funds on card'
+    expect { subject.touch_in(station) }.to raise_error 'insufficient funds on card'
   end
   
+  # let(:station){ double:station }
+
+  # it 'stores the station as entry station' do
+  #   subject.touch_in(station)
+  #   expect { subject.entry_station }.to eq station
+  # end
+
 end
