@@ -9,19 +9,19 @@ describe Oystercard do
   it 'adds money to card' do 
     expect(subject).to respond_to(:top_up).with(1).argument
   end
+  # ARBITRARY AS OF CHAPTER 9 
+  # it 'totals the balance' do
+  #   expect { subject.top_up(10) }.to change { subject.balance }.by 10 
+  # end
 
-  it 'totals the balance' do
-    expect { subject.top_up(10) }.to change { subject.balance }.by 10 
-  end
+  # it 'removes money from card' do 
+  #   expect(subject).to respond_to(:deduct).with(1).argument
+  # end
 
-  it 'removes money from card' do 
-    expect(subject).to respond_to(:deduct).with(1).argument
-  end
-
-  it 'deducts money for fair' do
-    subject.top_up(50)
-    expect { subject.deduct(3) }.to change { subject.balance }.by -3
-  end
+  # it 'deducts money for fair' do
+  #   subject.top_up(50)
+  #   expect { subject.deduct(3) }.to change { subject.balance }.by -3
+  # end
     
   it 'touches in for journey' do
     expect(subject).to respond_to(:touch_in)
@@ -53,6 +53,12 @@ describe Oystercard do
       subject.touch_in
       subject.touch_out
       expect(subject).not_to be_in_journey
+    end
+    
+    it 'deducts money from the card when user touches out' do
+      subject.touch_in
+      subject.touch_out
+      expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
     end
 
   end
