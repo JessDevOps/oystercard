@@ -23,6 +23,7 @@ attr_reader :balance , :journey
   end
 
   def touch_in
+    fail 'insufficient funds on card' if @balance < 1
     @journey = true
   end
 

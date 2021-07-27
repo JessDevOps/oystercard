@@ -49,12 +49,16 @@ describe Oystercard do
       expect(subject).to be_in_journey 
     end
 
+    it 'takes a user out of a journey' do
+      subject.touch_in
+      subject.touch_out
+      expect(subject).not_to be_in_journey
+    end
+
   end
 
-  it 'takes a user out of a journey' do
-    subject.touch_in
-    subject.touch_out
-    expect(subject).not_to be_in_journey
+  it 'shows error message on touch in if card balance < 1' do
+    expect { subject.touch_in }.to raise_error 'insufficient funds on card'
   end
-
+  
 end
