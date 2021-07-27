@@ -14,11 +14,6 @@ describe Oystercard do
     expect { subject.top_up(10) }.to change { subject.balance }.by 10 
   end
 
-  it 'has a maximum balance' do
-    subject.top_up(90)
-    expect { subject.top_up(5) }.to raise_error 'has exceeded max balance' 
-  end
-
   it 'removes money from card' do 
     expect(subject).to respond_to(:deduct).with(1).argument
   end
@@ -40,15 +35,26 @@ describe Oystercard do
     expect(subject).not_to be_in_journey
   end
 
-  it 'can touch in' do
-    subject.touch_in
-    expect(subject).to be_in_journey 
+  context 'to check card has enough balance' do
+    before(:each) do
+      subject.top_up(Oystercard::MAXIMUM_BALANCE)
+    end
+    
+    it 'has a maximum balance' do
+      expect { subject.top_up(5) }.to raise_error 'has exceeded max balance' 
+    end
+
+    it 'can touch in' do
+      subject.touch_in
+      expect(subject).to be_in_journey 
+    end
+
   end
 
-  # it 'takes a user out of a journey' do
-  #   subject.touch_in
-  #   subject.touch_out
-  #   expect(subject).not_to be_in_journey
-  # end
+  it 'takes a user out of a journey' do
+    subject.touch_in
+    subject.touch_out
+    expect(subject).not_to be_in_journey
+  end
 
 end
