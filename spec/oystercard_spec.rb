@@ -2,7 +2,8 @@ require 'oystercard.rb'
 
 describe Oystercard do
 
-  let(:station){ double:station }
+  let(:entry_station){ double:station }
+  let(:exit_station){ double:station }
 
   it 'has a default balance' do
     expect(subject.balance).to eq 0 
@@ -37,7 +38,7 @@ describe Oystercard do
     expect(subject).not_to be_in_journey
   end
 
-  context 'to check card has enough balance' do
+  context 'checks card has enough balance before it' do
 
     before(:each) do
       subject.top_up(Oystercard::MAXIMUM_BALANCE)
@@ -48,38 +49,37 @@ describe Oystercard do
     end
 
     it 'can touch in' do
-      subject.touch_in(station)
+      subject.touch_in(entry_station)
       expect(subject).to be_in_journey 
     end
 
     it 'takes a user out of a journey' do
-      subject.touch_in(station)
-      subject.touch_out
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
       expect(subject).not_to be_in_journey
     end
     
     it 'deducts money from the card when user touches out' do
-      subject.touch_in(station)
-      subject.touch_out
-      expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect { subject.touch_out(exit_station) }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
     end
 
     it 'stores the station as entry station' do
-      subject.touch_in(station)
-      expect(subject.entry_station).to eq station
+      subject.touch_in(entry_station)
+      expect(subject.entry_station).to eq entry_station
+    end
+
+    it 'stores a station as an exit station' do
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.exit_station).to eq exit_station
     end
 
   end
 
   it 'shows error message on touch in if card balance < 1' do
-    expect { subject.touch_in(station) }.to raise_error 'insufficient funds on card'
+    expect { subject.touch_in(entry_station) }.to raise_error 'insufficient funds on card'
   end
   
-  # let(:station){ double:station }
-
-  # it 'stores the station as entry station' do
-  #   subject.touch_in(station)
-  #   expect { subject.entry_station }.to eq station
-  # end
-
 end
