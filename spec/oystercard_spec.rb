@@ -2,8 +2,9 @@ require 'oystercard.rb'
 
 describe Oystercard do
 
-  let(:entry_station){ double:station }
-  let(:exit_station){ double:station }
+  let(:entry_station){double :station}
+  let(:exit_station){double :station}
+  let(:journey){ {entry_station => entry_station, exit_station => exit_station} }
 
   it 'has a default balance' do
     expect(subject.balance).to eq 0 
@@ -76,10 +77,20 @@ describe Oystercard do
       expect(subject.exit_station).to eq exit_station
     end
 
+    it 'checks that touching in and touching our creates one journey' do
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.journeys).not_to be_empty
+    end
+
   end
 
   it 'shows error message on touch in if card balance < 1' do
     expect { subject.touch_in(entry_station) }.to raise_error 'insufficient funds on card'
+  end
+
+  it 'checks the card has an empty journey history' do
+    expect(subject.journeys).to be_empty
   end
   
 end
